@@ -1,6 +1,6 @@
 # Script d'installation automatique de Zabbix
 
-Ce script automatise l'installation complète de Zabbix 8.0 sur Ubuntu 24.04, incluant la configuration de la base de données, du serveur web et de tous les composants nécessaires.
+Ce script automatise l'installation complète de Zabbix 8.0 sur Ubuntu Server 24.04 LTS, incluant la configuration de la base de données, du serveur web et de tous les composants nécessaires.
 
 ## 🚀 Fonctionnalités
 
@@ -16,7 +16,7 @@ Ce script d'installation automatique prend en charge :
 
 ## 📋 Prérequis
 
-- **Système d'exploitation** : Ubuntu 24.04 LTS
+- **Système d'exploitation** : Ubuntu Server 24.04 LTS
 - **Privilèges** : Accès sudo/root
 - **Connectivité** : Accès Internet pour télécharger les paquets
 - **RAM** : Minimum 2 GB recommandé
@@ -178,4 +178,4 @@ Les contributions sont les bienvenues ! N'hésitez pas à :
 
 **Auteur** : aruffin963  
 **Version Zabbix** : 8.0  
-**Système supporté** : Ubuntu 24.04 LTS
+**Système supporté** : Ubuntu Server 24.04 LTS
