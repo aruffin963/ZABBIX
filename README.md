@@ -1,15 +1,23 @@
-# Script d'installation automatique de Zabbix
+# Scripts d'installation automatique de Zabbix
 
-Ce script automatise l'installation complète de Zabbix 8.0 sur Ubuntu Server 24.04 LTS, incluant la configuration de la base de données, du serveur web et de tous les composants nécessaires.
+Ces scripts automatisent l'installation complète de Zabbix 8.0 sur Ubuntu Server 24.04 LTS en deux étapes distinctes : préparation de la base de données et installation des composants Zabbix.
 
 ## 🚀 Fonctionnalités
 
-Ce script d'installation automatique prend en charge :
+Cette installation automatique est divisée en **deux scripts complémentaires** :
 
-- **Installation complète de Zabbix 8.0** avec tous ses composants
-- **Configuration automatique de la pile LAMP** (Apache, MariaDB, PHP)
-- **Création automatique de la base de données** avec l'utilisateur configuré
-- **Configuration des fichiers de configuration** Zabbix et Apache
+### 📁 Script 1 : `db.sh` - Préparation de la base de données
+- **Installation et configuration de MariaDB**
+- **Sécurisation automatique de MariaDB**
+- **Création de la base de données Zabbix**
+- **Création de l'utilisateur avec privilèges appropriés**
+- **Vérifications automatiques des résultats**
+
+### 🖥️ Script 2 : `zabbix.sh` - Installation des composants Zabbix
+- **Installation de la pile web** (Apache, PHP avec extensions)
+- **Installation des composants Zabbix 8.0** (serveur, frontend, agent)
+- **Import automatique du schéma Zabbix**
+- **Configuration automatique des fichiers** de configuration
 - **Démarrage et activation des services** système
 - **Configuration du pare-feu** pour l'accès web
 - **Guide de configuration post-installation**
@@ -24,62 +32,81 @@ Ce script d'installation automatique prend en charge :
 
 ## 🔧 Installation
 
-1. **Téléchargez le script** :
+1. **Téléchargez les scripts** :
    ```bash
-   wget https://raw.githubusercontent.com/aruffin963/ZABBIX/main/zabbix.sh
-   # ou clonez le repository
    git clone https://github.com/aruffin963/ZABBIX.git
+   cd ZABBIX
    ```
 
-2. **Rendez le script exécutable** :
+2. **Rendez les scripts exécutables** :
    ```bash
-   chmod +x zabbix.sh
+   chmod +x db.sh zabbix.sh
    ```
 
-3. **Exécutez le script** :
+3. **⚠️ IMPORTANT : Exécutez les scripts dans l'ordre suivant** :
+
+   ### Étape 1 : Préparation de la base de données
+   ```bash
+   ./db.sh
+   ```
+   
+   ### Étape 2 : Installation de Zabbix
    ```bash
    ./zabbix.sh
    ```
 
+   > 📝 **Note** : Le script `zabbix.sh` vous demandera de ressaisir les mêmes informations que dans `db.sh`. Assurez-vous de fournir **exactement les mêmes valeurs**.
+
 ## 📝 Utilisation
 
-Lors de l'exécution, le script vous demandera de saisir :
+### 🗃️ Premier script : `db.sh`
 
-1. **Nom d'utilisateur** de la base de données Zabbix
-2. **Mot de passe** pour l'utilisateur de la base de données
-3. **Nom de la base de données** à créer (ex: zabbix)
+Ce script vous demandera de saisir :
 
-Le script effectuera ensuite automatiquement :
+1. **Nom de la base de données** à créer (ex: zabbix)
+2. **Nom d'utilisateur** pour la base de données Zabbix  
+3. **Mot de passe** pour l'utilisateur de la base de données
+
+Le script effectuera automatiquement :
+- Installation de MariaDB
+- Sécurisation de l'installation MariaDB
+- Création de la base de données avec encodage UTF8MB4
+- Création de l'utilisateur avec tous les privilèges
+- Vérification de la création réussie
+
+### 🖥️ Deuxième script : `zabbix.sh`
+
+Ce script vous demandera de **ressaisir les mêmes informations** configurées lors du premier script :
+
+1. **Nom d'utilisateur** de la base de données (identique à celui créé avec `db.sh`)
+2. **Mot de passe** de l'utilisateur (identique à celui défini avec `db.sh`) 
+3. **Nom de la base de données** (identique à celle créée avec `db.sh`)
+
+> ⚠️ **Important** : Vous devez renseigner **exactement les mêmes valeurs** que celles utilisées lors de l'exécution de `db.sh`
+
+Le script effectue ensuite automatiquement :
 
 ### Étape 1 : Mise à jour du système
 - Mise à jour des paquets système
 - Installation des outils de base (wget, curl, net-tools)
 
-### Étape 2 : Installation de la pile LAMP
+### Étape 2 : Installation de la pile web
 - Apache2 (serveur web)
-- MariaDB (serveur de base de données)
-- PHP avec toutes les extensions requises
+- PHP avec toutes les extensions requises pour Zabbix
 
-### Étape 3 : Sécurisation de MariaDB
-- Exécution de `mysql_secure_installation`
-
-### Étape 4 : Installation de Zabbix
+### Étape 3 : Installation de Zabbix
 - Ajout du dépôt officiel Zabbix 8.0
 - Installation des composants Zabbix (serveur, frontend, agent)
 
-### Étape 5 : Configuration de la base de données
-- Création automatique de la base de données
-- Création de l'utilisateur avec les privilèges appropriés
-- Import du schéma Zabbix
-
-### Étape 6 : Configuration des services
-- Configuration automatique des fichiers de configuration
+### Étape 4 : Configuration et import des données
+- Import automatique du schéma Zabbix dans la base de données existante
+- Configuration automatique des fichiers de configuration avec les paramètres saisis
 - Définition du fuseau horaire (Europe/Paris)
-- Démarrage et activation des services
 
-### Étape 7 : Configuration du pare-feu
-- Autorisation du trafic HTTP (port 80)
-- Autorisation du trafic SSH (port 22)
+### Étape 5 : Finalisation
+- Démarrage et activation des services
+- Configuration du pare-feu (ports 80 et 22)
+- Affichage des informations de connexion
 
 ## 🌐 Accès à l'interface web
 
@@ -91,12 +118,14 @@ http://votre-adresse-ip/zabbix
 
 ### Configuration initiale dans l'interface web
 
+Utilisez les **mêmes paramètres** que vous avez saisis dans les deux scripts :
+
 1. **Type de base de données** : MySQL
 2. **Hôte de base de données** : localhost
 3. **Port de base de données** : 0 (ou laisser vide)
-4. **Nom de la base de données** : [nom choisi pendant l'installation]
-5. **Utilisateur** : [nom d'utilisateur choisi pendant l'installation]
-6. **Mot de passe** : [mot de passe choisi pendant l'installation]
+4. **Nom de la base de données** : [même nom utilisé dans `db.sh` et `zabbix.sh`]
+5. **Utilisateur** : [même nom d'utilisateur utilisé dans `db.sh` et `zabbix.sh`]
+6. **Mot de passe** : [même mot de passe utilisé dans `db.sh` et `zabbix.sh`]
 7. **Nom du serveur Zabbix** : Zabbix-[VotrePrénom]
 8. **Fuseau horaire par défaut** : Europe/Paris
 9. **Thème** : Au choix
@@ -110,12 +139,15 @@ http://votre-adresse-ip/zabbix
 
 ## 🛠 Services installés
 
-Le script configure les services suivants :
+Les scripts configurent les services suivants :
 
+**Après `db.sh` :**
+- **mariadb** : Serveur de base de données
+
+**Après `zabbix.sh` :**
 - **zabbix-server** : Serveur principal Zabbix
 - **zabbix-agent** : Agent Zabbix local
 - **apache2** : Serveur web
-- **mariadb** : Serveur de base de données
 
 Tous ces services sont automatiquement démarrés et activés au boot.
 
@@ -130,8 +162,18 @@ Tous ces services sont automatiquement démarrés et activés au boot.
 
 Pour vérifier que l'installation s'est bien déroulée :
 
+**Après `db.sh` :**
 ```bash
-# Vérifier le statut des services
+# Vérifier MariaDB
+sudo systemctl status mariadb
+
+# Tester la connexion à la base
+mysql -u[nom_utilisateur] -p[mot_de_passe] [nom_base]
+```
+
+**Après `zabbix.sh` :**
+```bash
+# Vérifier le statut de tous les services
 sudo systemctl status zabbix-server
 sudo systemctl status zabbix-agent
 sudo systemctl status apache2
@@ -145,16 +187,24 @@ sudo tail -f /var/log/zabbix/zabbix_server.log
 
 ### Problèmes courants
 
-1. **Service Zabbix ne démarre pas** :
-   - Vérifiez la configuration de la base de données
+1. **Erreur "Access denied" lors de l'exécution du script `zabbix.sh`** :
+   - Vérifiez que vous avez saisi **exactement les mêmes informations** dans `zabbix.sh` que dans `db.sh`
+   - Assurez-vous que MariaDB est démarré : `sudo systemctl status mariadb`
+
+2. **Erreur lors de l'import du schéma Zabbix** :
+   - Vérifiez que la base de données créée avec `db.sh` existe : `mysql -u[utilisateur] -p -e "SHOW DATABASES;"`
+   - Assurez-vous que les permissions sont correctes
+
+3. **Service Zabbix ne démarre pas** :
+   - Vérifiez que les paramètres de base de données dans `/etc/zabbix/zabbix_server.conf` correspondent à ceux saisis
    - Consultez les logs : `/var/log/zabbix/zabbix_server.log`
 
-2. **Interface web inaccessible** :
+4. **Interface web inaccessible** :
    - Vérifiez qu'Apache est démarré : `sudo systemctl status apache2`
    - Vérifiez le pare-feu : `sudo ufw status`
 
-3. **Erreur de connexion à la base de données** :
-   - Vérifiez les paramètres dans `/etc/zabbix/zabbix_server.conf`
+5. **Erreur de connexion à la base de données lors de la configuration web** :
+   - Vérifiez que vous utilisez **exactement les mêmes paramètres** dans l'interface web que ceux saisis dans les scripts
    - Testez la connexion : `mysql -u[utilisateur] -p[mot_de_passe] [base_de_données]`
 
 ### Logs utiles

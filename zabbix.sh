@@ -2,13 +2,15 @@
 
 echo -ne "ZABBIX INSTALLATION \n"
 
+echo -ne "RENSEIGNEZ LE NOM, LE MOT DE PASSE ET LE NOM DE LA DB UTILISEZ POUR LE SCRIPT db.sh\n=========================\n\n"
+
+read -p "RENSEIGNEZ VOTRE USERNAME  : " name
+
+read -p "RENSEIGNEZ VOTRE MOT DE PASSE  : " mdp
+
+read -p "RENSEIGNER LE NOM DE LA DATABASE A CREE  : " db
+
 echo -ne "=========================\n\n"
-
-read -p "TAPEZ VOTRE USERNAME  : " name
-
-read -p "TAPEZ VOTRE MOT DE PASSE  : " mdp
-
-read -p "TAPEZ LE NOM DE LA DATABASE A CREE  : " db
 
 echo -ne "\n\n"
 
@@ -20,16 +22,12 @@ echo -ne "INSTALLATION DES OUTILS \n=========================\n\n"
 
 sudo apt install wget curl net-tools
 
-sudo apt install -y apache2 mariadb-server php php-cli libapache2-mod-php
+sudo apt install -y apache2 php php-cli libapache2-mod-php
 
 sudo apt install -y php-mysql php-xml php-bcmath php-mbstring php-ldap php-json php-gd php-zip php-curl
 
-sudo systemctl enable --now apache2 mariadb
+sudo systemctl enable --now apache2
  
-echo -ne "SECURISATION DE MARIADB \n=========================\n\n"
-
-sudo mysql_secure_installation
-
 echo -ne "AJOUT DU DEPOT ZABBIX \n=========================\n\n"
 
 wget https://repo.zabbix.com/zabbix/8.0/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_8.0%2Bubuntu24.04_all.deb
@@ -42,25 +40,9 @@ sudo apt  install -y zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf 
 
 echo -ne "CREATION DE LA BASE DE DONNEE \n=========================\n\n"
 
-sudo mysql -u root
-
-echo -ne "CREATION DE LA BASE DE DONNEE \n"
-
-echo -ne "=========================\n\n 
-
-sudo mysql -u root -e "
-CREATE DATABASE $db CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
-CREATE USER '$name'@'localhost' IDENTIFIED BY '$mdp';
-GRANT ALL PRIVILEGES ON $db.* TO '$name'@'localhost';
-FLUSH PRIVILEGES;
-EXIT;"
-
-echo -ne "========FIN DE LA CREATION========\n";
-
-echo -ne "IMPORTATION DU SCHEMA ZABBIX \n=========================\n\n
+echo -ne "IMPORTATION DU SCHEMA ZABBIX \n=========================\n\n"
 
 sudo zcat /usr/share/zabbix/sql-scripts/mysql/server.sql.gz | mysql -u$name -p zabbix
-
 
 echo -ne "==============================================================\n"
 
@@ -110,17 +92,48 @@ echo "ENTREZ ENSUITE VOTRE IP DANS VOTRE NAVIGATEUR: http://votreip/zabbix\n"
 echo -ne "CHANGEZ LES CONFIGURATIONS EN SUIVANT CES ETAPES;\n"
 
 echo -ne "1.Database type  : MySQL\n"
+echo -ne "=========================\n\n"
+
 echo -ne "2.Database host  : localhost\n"
+
+echo -ne "=========================\n\n"
+
 echo -ne "3.Database port  : 0  (ou laisser vide)\n"
+
+echo -ne "=========================\n\n"
+
 echo -ne "4.Database name  : $db\n"
+
+echo -ne "=========================\n\n"
+
 echo -ne "5.User           : $name\n"
+
+echo -ne "=========================\n\n"
+
 echo -ne "6.Password       : $mdp\n"
 
+echo -ne "=========================\n\n"
+
 echo -ne "7.Zabbix server name : Zabbix-[VotrePrénom]\n"      
+
+echo -ne "=========================\n\n"
+
 echo -ne "8.Default timezone   : Europe/Paris\n"
+
+echo -ne "=========================\n\n"
+
 echo -ne "9.Theme (faites votre choix)              \n"
+
+echo -ne "=========================\n\n"
+
 echo -ne "10.Connexion finale et post-configuration\n"
+
+echo -ne "=========================\n\n"
+
 echo -ne " Username : Admin\n"
+
+echo -ne "=========================\n\n"
+
 echo -ne " Password : zabbix\n"
 
 echo -ne "Après la première installation changez le mot de passe \n"
